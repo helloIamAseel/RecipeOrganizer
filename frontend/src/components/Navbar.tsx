@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useAuthState } from '../hooks/useAuthState';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 
 export default function Navbar() {
   const { user } = useAuthState();
@@ -10,6 +10,18 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
+   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
   const links = [
     { to: '/', label: 'Discover' },
     { to: '/weekly', label: 'Weekly Highlights' },
@@ -42,6 +54,9 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          <button onClick={toggleTheme} className="mx-2 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all">
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
           {user ? (
             <button
               onClick={() => { signOut(auth); navigate('/'); }}
@@ -69,6 +84,9 @@ export default function Navbar() {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden bg-[#8a3e20] px-4 pb-4 flex flex-col gap-2">
+          <button onClick={toggleTheme} className="text-white py-2 border-b border-white/10 text-left flex justify-between items-center">
+             <span>{theme === 'light' ? '🌙' : '☀️'}</span>
+          </button>
           {links.map(link => (
             <Link
               key={link.to}

@@ -22,7 +22,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-[#ffeaad]">
+     <div className="min-h-screen bg-[#ffeaad] dark:bg-[#1a0f0a] transition-colors duration-300">
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
