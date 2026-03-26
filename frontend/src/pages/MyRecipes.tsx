@@ -18,8 +18,12 @@ export default function MyRecipes() {
     setLoading(false);
   }
 
-  useEffect(() => { fetchMyRecipes(); }, [user]);
-
+  useEffect(() => {
+    (async () => {
+      await fetchMyRecipes();
+    })();
+  }, [user]);
+  
   async function handleDelete(id: string) {
     if (!confirm('Delete this recipe?')) return;
     await deleteDoc(doc(db, 'recipes', id));
@@ -51,12 +55,12 @@ export default function MyRecipes() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {recipes.map(recipe => (
-             <RecipeCard 
-             key={recipe.id} 
-             recipe={recipe} 
-             onLikeToggle={fetchMyRecipes}
-             onDelete={() => handleDelete(recipe.id)}
-             />
+            <RecipeCard
+              key={recipe.id}
+              recipe={recipe}
+              onLikeToggle={fetchMyRecipes}
+              onDelete={() => handleDelete(recipe.id)}
+            />
           ))}
         </div>
       )}

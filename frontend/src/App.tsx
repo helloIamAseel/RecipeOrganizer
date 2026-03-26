@@ -9,6 +9,7 @@ import WeeklyHighlights from './pages/WeeklyHighlights';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import RecipeDetail from './pages/RecipeDetail';
+import EditRecipe from './pages/EditRecipe';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuthState();
@@ -22,7 +23,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <BrowserRouter>
-     <div className="min-h-screen bg-[#ffeaad] dark:bg-[#1a0f0a] transition-colors duration-300">
+      <div className="min-h-screen bg-[#ffeaad] dark:bg-[#1a0f0a] transition-colors duration-300">
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/add-recipe" element={<ProtectedRoute><AddRecipe /></ProtectedRoute>} />
           <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
           <Route path="/weekly" element={<WeeklyHighlights />} />
+          <Route path="/edit-recipe/:id" element={<ProtectedRoute><EditRecipe /></ProtectedRoute>} />
         </Routes>
       </div>
     </BrowserRouter>

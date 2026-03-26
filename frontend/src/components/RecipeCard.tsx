@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../firebase';
+
 import { useAuthState } from '../hooks/useAuthState';
 
 export interface Recipe {
+
   id: string;
   title: string;
   ingredients: string;
@@ -16,8 +18,11 @@ export interface Recipe {
   likes: string[];
   createdAt: number;
   imageUrl?: string;
-}
+  editedById?: string;
+  editedByName?: string;
+  updatedAt?: number;
 
+}
 interface Props {
   recipe: Recipe;
   onLikeToggle?: () => void;
@@ -66,27 +71,31 @@ export default function RecipeCard({ recipe, onLikeToggle, onDelete }: Props) {
           >
             View Recipe →
           </Link>
-            <div className="flex items-center gap-2">
-              {onDelete && (
-               <button
+          <div className="flex items-center gap-2">
+            <Link
+              to={`/edit-recipe/${recipe.id}`}
+              className="px-3 py-1 rounded-full text-sm font-medium border border-[#a54d2a] text-[#a54d2a] hover:bg-[#ffeaad]"            >
+              Edit
+            </Link>
+            {onDelete && (
+              <button
                 onClick={onDelete}
                 className="flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-500 hover:bg-red-200"
               >
-                 Delete
-                </button>
-             )}
-          <button
-            onClick={toggleLike}
-            className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-              isLiked
+                Delete
+              </button>
+            )}
+            <button
+              onClick={toggleLike}
+              className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium transition-colors ${isLiked
                 ? 'bg-red-100 text-red-500'
                 : 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-400'
-            }`}
-          >
-            {isLiked ? '❤️' : '🤍'} {recipe.likes?.length || 0}
-          </button>
+                }`}
+            >
+              {isLiked ? '❤️' : '🤍'} {recipe.likes?.length || 0}
+            </button>
+          </div>
         </div>
-       </div>
       </div>
     </div>
   );

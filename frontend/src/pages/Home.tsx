@@ -18,8 +18,12 @@ export default function Home() {
     setLoading(false);
   }
 
-  useEffect(() => { fetchRecipes(); }, []);
-
+  useEffect(() => {
+    (async () => {
+      await fetchRecipes();
+    })();
+  }, []);
+  
   const filtered = recipes.filter(r => {
     const matchSearch = r.title.toLowerCase().includes(search.toLowerCase()) ||
       r.ingredients.toLowerCase().includes(search.toLowerCase());

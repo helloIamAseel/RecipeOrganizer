@@ -44,7 +44,7 @@ export default function AddRecipe() {
       <h1 className="text-4xl font-serif font-bold text-[#a54d2a] mb-8">Add a New Recipe</h1>
 
       <form onSubmit={handleSubmit} className="bg-[#fff8e4] border-2 border-[#a54d2a] rounded-xl p-6 flex flex-col gap-5">
-        
+
         <div>
           <label className="block text-sm font-semibold text-[#a54d2a] mb-1">Recipe Title *</label>
           <input
