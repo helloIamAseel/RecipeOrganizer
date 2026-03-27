@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthState } from './hooks/useAuthState';
+import { LanguageProvider } from './context/LanguageContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import MyRecipes from './pages/MyRecipes';
@@ -13,30 +14,67 @@ import EditRecipe from './pages/EditRecipe';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuthState();
-  if (loading) return <div className="min-h-screen bg-[#ffeaad] flex items-center justify-center">
-    <div className="text-[#a54d2a] text-2xl font-serif animate-pulse">Loading...</div>
-  </div>;
+  if (loading) return (
+    <div className="min-h-screen bg-[#ffeaad] flex items-center justify-center">
+      <div className="text-[#a54d2a] text-2xl font-serif animate-pulse">Loading...</div>
+    </div>
+  );
   if (!user) return <Navigate to="/login" />;
   return <>{children}</>;
 }
 
 export default function App() {
   return (
+    <LanguageProvider>
     <BrowserRouter>
       <div className="min-h-screen bg-[#ffeaad] dark:bg-[#1a0f0a] transition-colors duration-300">
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/recipe/:id" element={<RecipeDetail />} />
-          <Route path="/my-recipes" element={<ProtectedRoute><MyRecipes /></ProtectedRoute>} />
-          <Route path="/add-recipe" element={<ProtectedRoute><AddRecipe /></ProtectedRoute>} />
-          <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
-          <Route path="/weekly" element={<WeeklyHighlights />} />
-          <Route path="/edit-recipe/:id" element={<ProtectedRoute><EditRecipe /></ProtectedRoute>} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/recipe/:id" element={<RecipeDetail />} />
+
+            <Route
+              path="/my-recipes"
+              element={
+                <ProtectedRoute>
+                  <MyRecipes />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/add-recipe"
+              element={
+                <ProtectedRoute>
+                  <AddRecipe />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/favorites"
+              element={
+                <ProtectedRoute>
+                  <Favorites />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route path="/weekly" element={<WeeklyHighlights />} />
+
+            <Route
+              path="/edit-recipe/:id"
+              element={
+                <ProtectedRoute>
+                  <EditRecipe />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </LanguageProvider>
   );
 }

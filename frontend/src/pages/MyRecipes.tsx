@@ -4,11 +4,13 @@ import { db } from '../firebase';
 import { useAuthState } from '../hooks/useAuthState';
 import RecipeCard, { type Recipe } from '../components/RecipeCard';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function MyRecipes() {
   const { user } = useAuthState();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   async function fetchMyRecipes() {
     if (!user) return;
@@ -25,7 +27,7 @@ export default function MyRecipes() {
   }, [user]);
   
   async function handleDelete(id: string) {
-    if (!confirm('Delete this recipe?')) return;
+    if (!confirm(t.delete + '?')) return;
     await deleteDoc(doc(db, 'recipes', id));
     fetchMyRecipes();
   }
@@ -33,23 +35,23 @@ export default function MyRecipes() {
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-4xl font-serif font-bold text-[#a54d2a]">My Recipes</h1>
+        <h1 className="text-4xl font-serif font-bold text-[#a54d2a]">{t.myRecipesTitle}</h1>
         <Link
           to="/add-recipe"
           className="px-5 py-2 bg-[#a54d2a] text-white rounded-lg font-semibold hover:bg-[#c76139] transition-colors"
         >
-          + Add Recipe
+          + {t.addRecipe}
         </Link>
       </div>
 
       {loading ? (
-        <div className="text-center text-[#a54d2a] animate-pulse py-20 font-serif text-xl">Loading...</div>
+        <div className="text-center text-[#a54d2a] animate-pulse py-20 font-serif text-xl">{t.loading}</div>
       ) : recipes.length === 0 ? (
         <div className="text-center py-20">
           <p className="text-6xl mb-4">👨‍🍳</p>
-          <p className="text-[#a54d2a] text-xl font-serif mb-4">You haven't added any recipes yet!</p>
+          <p className="text-[#a54d2a] text-xl font-serif mb-4">{t.noRecipesYet}</p>
           <Link to="/add-recipe" className="px-6 py-3 bg-[#a54d2a] text-white rounded-lg font-semibold hover:bg-[#c76139]">
-            Add Your First Recipe
+            {t.addFirstRecipe}
           </Link>
         </div>
       ) : (

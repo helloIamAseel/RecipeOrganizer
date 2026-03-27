@@ -3,6 +3,8 @@ import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../firebase';
 
 import { useAuthState } from '../hooks/useAuthState';
+import { useLanguage } from '../context/LanguageContext';
+import { formatMinutes, translateCategory } from '../context/translations';
 
 export interface Recipe {
 
@@ -31,6 +33,7 @@ interface Props {
 
 export default function RecipeCard({ recipe, onLikeToggle, onDelete }: Props) {
   const { user } = useAuthState();
+  const { t, language } = useLanguage();
   const isLiked = user ? recipe.likes?.includes(user.uid) : false;
 
   async function toggleLike() {
@@ -54,11 +57,13 @@ export default function RecipeCard({ recipe, onLikeToggle, onDelete }: Props) {
             </h2>
           </Link>
           <span className="text-xs bg-[#ffeaad] text-[#a54d2a] px-2 py-1 rounded-full font-medium">
-            {recipe.category}
+            {translateCategory(recipe.category, language)}
           </span>
         </div>
 
-        <p className="text-sm text-gray-500 mb-1">⏱ {recipe.prepTime} min · by {recipe.authorName}</p>
+        <p className="text-sm text-gray-500 mb-1">
+          {formatMinutes(Number(recipe.prepTime), language)} · {t.by} {recipe.authorName}
+        </p>
 
         <p className="text-gray-700 text-sm line-clamp-2 mb-3">
           {recipe.ingredients}
@@ -69,25 +74,29 @@ export default function RecipeCard({ recipe, onLikeToggle, onDelete }: Props) {
             to={`/recipe/${recipe.id}`}
             className="text-sm text-[#a54d2a] font-semibold hover:underline"
           >
-            View Recipe →
+            {t.viewRecipe} →
           </Link>
           <div className="flex items-center gap-2">
-            <Link
-              to={`/edit-recipe/${recipe.id}`}
-              className="px-3 py-1 rounded-full text-sm font-medium border border-[#a54d2a] text-[#a54d2a] hover:bg-[#ffeaad]"            >
-              Edit
-            </Link>
+            {user?.uid === recipe.authorId && (
+              <Link
+                to={`/edit-recipe/${recipe.id}`}
+                className="px-3 py-1 rounded-full text-sm font-medium border border-[#a54d2a] text-[#a54d2a] hover:bg-[#ffeaad]"
+              >
+                {t.edit}
+              </Link>
+            )}
             {onDelete && (
               <button
                 onClick={onDelete}
                 className="flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-500 hover:bg-red-200"
               >
-                Delete
-              </button>
-            )}
-            <button
-              onClick={toggleLike}
-              className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium transition-colors ${isLiked
+                {t.delete}
+                </button>
+             )}
+          <button
+            onClick={toggleLike}
+            className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+              isLiked
                 ? 'bg-red-100 text-red-500'
                 : 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-400'
                 }`}

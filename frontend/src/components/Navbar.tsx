@@ -3,12 +3,14 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useAuthState } from '../hooks/useAuthState';
 import { useState,useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Navbar() {
   const { user } = useAuthState();
   const location = useLocation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { t, language, setLanguage } = useLanguage();
 
    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
@@ -23,12 +25,12 @@ export default function Navbar() {
 
   const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
   const links = [
-    { to: '/', label: 'Discover' },
-    { to: '/weekly', label: 'Weekly Highlights' },
+    { to: '/', label: t.discover },
+    { to: '/weekly', label: t.weekly },
     ...(user ? [
-      { to: '/my-recipes', label: 'My Recipes' },
-      { to: '/favorites', label: 'Favorites' },
-      { to: '/add-recipe', label: '+ Add Recipe' },
+      { to: '/my-recipes', label: t.myRecipes },
+      { to: '/favorites', label: t.favorites },
+      { to: '/add-recipe', label: t.addRecipe },
     ] : []),
   ];
 
@@ -36,7 +38,7 @@ export default function Navbar() {
     <header className="bg-[#a54d2a] shadow-lg">
       <nav className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="text-white font-serif text-xl font-bold tracking-wide">
-          🍴 Recipe Organizer
+          🍴 {t.appName}
         </Link>
 
         {/* Desktop nav */}
@@ -57,17 +59,26 @@ export default function Navbar() {
           <button onClick={toggleTheme} className="mx-2 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all">
             {theme === 'light' ? '🌙' : '☀️'}
           </button>
+
+          {/* Language toggle */}
+          <button
+            onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
+            className="mx-2 px-3 py-1.5 rounded-full border-2 border-white/60 text-white text-sm font-semibold hover:bg-white/20 transition-colors"
+          >
+            {language === 'ar' ? 'EN' : 'عربي'}
+          </button>
+
           {user ? (
             <button
               onClick={() => { signOut(auth); navigate('/'); }}
-              className="ml-2 px-4 py-2 bg-white text-[#a54d2a] rounded-md text-sm font-semibold hover:bg-[#ffeaad] transition-colors"
+              className="px-4 py-2 bg-white text-[#a54d2a] rounded-md text-sm font-semibold hover:bg-[#ffeaad] transition-colors"
             >
-              Sign Out
+              {t.signOut}
             </button>
           ) : (
-            <div className="flex gap-2 ml-2">
-              <Link to="/login" className="px-4 py-2 text-white/90 hover:text-white text-sm font-medium">Login</Link>
-              <Link to="/register" className="px-4 py-2 bg-white text-[#a54d2a] rounded-md text-sm font-semibold hover:bg-[#ffeaad] transition-colors">Register</Link>
+            <div className="flex gap-2">
+              <Link to="/login" className="px-4 py-2 text-white/90 hover:text-white text-sm font-medium">{t.login}</Link>
+              <Link to="/register" className="px-4 py-2 bg-white text-[#a54d2a] rounded-md text-sm font-semibold hover:bg-[#ffeaad] transition-colors">{t.register}</Link>
             </div>
           )}
         </div>
@@ -97,17 +108,23 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          <button
+            onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
+            className="text-left text-white py-2 font-medium border-b border-white/10"
+          >
+            {language === 'ar' ? '🌐 English' : '🌐 عربي'}
+          </button>
           {user ? (
             <button
               onClick={() => { signOut(auth); navigate('/'); setMenuOpen(false); }}
               className="text-left text-white py-2 font-medium"
             >
-              Sign Out
+              {t.signOut}
             </button>
           ) : (
             <>
-              <Link to="/login" onClick={() => setMenuOpen(false)} className="text-white py-2 font-medium">Login</Link>
-              <Link to="/register" onClick={() => setMenuOpen(false)} className="text-white py-2 font-medium">Register</Link>
+              <Link to="/login" onClick={() => setMenuOpen(false)} className="text-white py-2 font-medium">{t.login}</Link>
+              <Link to="/register" onClick={() => setMenuOpen(false)} className="text-white py-2 font-medium">{t.register}</Link>
             </>
           )}
         </div>
